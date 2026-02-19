@@ -1,0 +1,13 @@
+{
+  "name": "wcpos-wpml",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "wp-env": "wp-env",
+    "pretest": "wp-env start && wp-env run cli --env-cwd='wp-content/plugins/wcpos-wpml' -- composer install && wp-env run tests-cli --env-cwd='wp-content/plugins/wcpos-wpml' -- composer install",
+    "test": "wp-env run tests-cli --env-cwd='wp-content/plugins/wcpos-wpml' -- vendor/bin/phpunit -c phpunit.xml.dist"
+  },
+  "devDependencies": {
+    "@wordpress/env": "^10.39.0"
+  }
+}

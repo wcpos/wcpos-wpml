@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'codex/**'
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Prepare local dependency stubs
+        run: |
+          mkdir -p ../woocommerce-pos ../woocommerce-pos-pro
+
+          if [ ! -f ../woocommerce-pos/woocommerce-pos.php ]; then
+            printf '%s\n' '<?php' '/**' ' * Plugin Name: WCPOS (Stub)' ' */' > ../woocommerce-pos/woocommerce-pos.php
+          fi
+
+          if [ ! -f ../woocommerce-pos-pro/woocommerce-pos-pro.php ]; then
+            printf '%s\n' '<?php' '/**' ' * Plugin Name: WCPOS Pro (Stub)' ' */' > ../woocommerce-pos-pro/woocommerce-pos-pro.php
+          fi
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Run lint
+        run: pnpm wp-env run tests-cli --env-cwd='wp-content/plugins/wcpos-wpml' -- composer run lint
+
+      - name: Stop wp-env
+        if: always()
+        run: pnpm wp-env stop
