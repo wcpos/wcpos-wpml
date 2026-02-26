@@ -8,6 +8,6 @@
     "test": "wp-env run tests-cli --env-cwd='wp-content/plugins/wcpos-wpml' -- vendor/bin/phpunit -c phpunit.xml.dist"
   },
   "devDependencies": {
-    "@wordpress/env": "^10.39.0"
+    "@wordpress/env": "^11.0.0"
   }
 }
