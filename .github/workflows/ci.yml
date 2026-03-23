@@ -5,9 +5,27 @@ on:
     branches:
       - main
       - 'codex/**'
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'languages/**'
+      - 'LICENSE'
+      - '.editorconfig'
+      - '.gitignore'
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'languages/**'
+      - 'LICENSE'
+      - '.editorconfig'
+      - '.gitignore'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
