@@ -7,6 +7,11 @@
     "pretest": "wp-env start && wp-env run cli --env-cwd='wp-content/plugins/wcpos-wpml' -- composer install && wp-env run tests-cli --env-cwd='wp-content/plugins/wcpos-wpml' -- composer install",
     "test": "wp-env run tests-cli --env-cwd='wp-content/plugins/wcpos-wpml' -- vendor/bin/phpunit -c phpunit.xml.dist"
   },
+  "pnpm": {
+    "overrides": {
+      "ajv@>=7.0.0-alpha.0 <8.18.0": ">=8.18.0"
+    }
+  },
   "devDependencies": {
     "@wordpress/env": "^11.12.0"
   }
