@@ -147,9 +147,13 @@ class Test_WCPOS_WPML extends WP_UnitTestCase {
 	 * Skip when the free WCPOS plugin is too old to expose wcpos_request().
 	 */
 	private function requires_wcpos_request_helper(): void {
-		if ( ! function_exists( 'wcpos_request' ) ) {
-			$this->markTestSkipped( 'The free WCPOS plugin does not expose wcpos_request().' );
-		}
+		// ASSERT, do not skip. CI installs the real wp.org WCPOS release precisely so these tests
+		// run; a skip here would let the suite pass green having never exercised the v2 branch,
+		// which is what happened before the CI stub was replaced.
+		$this->assertTrue(
+			function_exists( 'wcpos_request' ),
+			'The free WCPOS plugin must expose wcpos_request() — the v2-lane tests are meaningless without it.'
+		);
 	}
 
 	/**
