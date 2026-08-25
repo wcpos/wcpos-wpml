@@ -646,14 +646,42 @@ class Plugin {
 	}
 
 	/**
-	 * True when current request is a WCPOS endpoint.
+	 * True when the current request belongs to WCPOS.
+	 *
+	 * WCPOS has two sync lanes and the route alone only identifies the first:
+	 *
+	 * - v1 (free plugin 1.9.x): every request carries a `/wcpos/v1/…` route.
+	 * - v2 (free plugin 1.10+): catalogue reads are proxied internally to
+	 *   `/wc/v3/products`, the serialized lane dispatches a bare `/` request in
+	 *   PHP, and writes arrive on `/wcpos/v2/push/…` before dispatching
+	 *   internally to `/wc/v3/…`. None of those start with `/wcpos/v1/`.
+	 *
+	 * So the route prefix is kept — it is what makes one release keep working
+	 * against 1.9.x — and free's own `wcpos_request()` helper is added on top.
+	 * That helper inspects the `X-WCPOS` header and query var, which are set on
+	 * the outer request and therefore true for every lane and API version,
+	 * including the internally dispatched bare `/`. It is guarded with
+	 * `function_exists()` so this plugin still loads against older free versions
+	 * that may not expose it.
 	 *
 	 * @param WP_REST_Request $request
 	 *
 	 * @return bool
 	 */
 	private function is_wcpos_route( WP_REST_Request $request ): bool {
-		return 0 === strpos( $request->get_route(), '/wcpos/v1/' );
+		$route = $request->get_route();
+
+		// WCPOS v1 lane, and any future versioned WCPOS namespace.
+		if ( 1 === preg_match( '#^/wcpos/v\d+/#', $route ) ) {
+			return true;
+		}
+
+		// WCPOS v2 lane: proxied /wc/v3/… reads and the serialized bare `/` request.
+		if ( function_exists( 'wcpos_request' ) && wcpos_request() ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
