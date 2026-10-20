@@ -638,11 +638,11 @@ class Plugin {
 	 * @return bool
 	 */
 	private function pos_only_products_enabled(): bool {
-		if ( ! function_exists( 'woocommerce_pos_get_settings' ) ) {
+		if ( ! function_exists( 'wcpos_get_settings' ) ) {
 			return false;
 		}
 
-		return (bool) woocommerce_pos_get_settings( 'general', 'pos_only_products' );
+		return (bool) wcpos_get_settings( 'general', 'pos_only_products' );
 	}
 
 	/**
